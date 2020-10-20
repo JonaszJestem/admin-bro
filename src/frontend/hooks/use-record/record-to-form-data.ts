@@ -22,11 +22,11 @@ export default function recordToFormData(record: RecordJSON): FormData {
   Object.entries(record.params).forEach(([key, value]) => {
     // {@link updateRecord} does not change empty objects "{}" - so in order to prevent having
     // them changed to "[object Object]" we have to set them to empty strings.
-    if (value === null) {
+    if (value === null && !Object.keys(record.params).find(k => k.startsWith(`${key}.`))) {
       return formData.set(key, FORM_VALUE_NULL)
     }
     // File objects has to go through because they are handled by FormData
-    if (typeof value === 'object' && (value as object).constructor !== File) {
+    if (typeof value === 'object' && (value as object)?.constructor !== File) {
       if (Array.isArray(value)) {
         return formData.set(key, FORM_VALUE_EMPTY_ARRAY)
       }
